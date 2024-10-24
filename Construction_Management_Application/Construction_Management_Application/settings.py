@@ -78,12 +78,8 @@ WSGI_APPLICATION = 'Construction_Management_Application.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'con1',      
-        'USER': 'postgres',           
-        'PASSWORD': 'root', 
-        'HOST': 'localhost',        
-        'PORT': '5432',             
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'adarsh.sqlite3',
     }
 }
 

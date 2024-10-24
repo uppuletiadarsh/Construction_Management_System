@@ -4,7 +4,7 @@ from rest_framework import permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from .models import Manager, Supervisor, Project, Task, Worker
-from .serializers import UserSerializer, ProjectSerializer, TaskSerializer, WorkerSerializer
+from .serializers import UserSerializer, ProjectSerializer, TaskSerializer, WorkerSerializer, SupervisorSerializer, ManagerSerializer
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
 
@@ -38,6 +38,30 @@ def logout_view(request):
     logout(request)
     return Response({'message': 'Logout successful'})
 
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def my_profile(request):
+    """Get the logged-in user's profile details."""
+    user_data = {
+        "username": request.user.username,
+        "email": request.user.email,  # Ensure user email is available
+    }
+
+    if hasattr(request.user, 'manager'):
+        manager = request.user.manager
+        serializer = ManagerSerializer(manager)
+        return Response({**user_data, **serializer.data})  # Combine user and manager data
+
+    elif hasattr(request.user, 'supervisor'):
+        supervisor = request.user.supervisor
+        serializer = SupervisorSerializer(supervisor)
+        return Response({**user_data, **serializer.data})  # Combine user and supervisor data
+
+    return Response({'message': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def create_project(request):
@@ -70,18 +94,12 @@ def create_task(request):
     if not hasattr(request.user, 'supervisor'):
         return Response({'message': 'You do not have permission to create a task.'}, status=status.HTTP_403_FORBIDDEN)
 
-    print("Request data:", request.data)  # Debug print
     serializer = TaskSerializer(data=request.data)
-    
     if serializer.is_valid():
-        print("Valid data:", serializer.validated_data)  # Debug print
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
-    print("Errors:", serializer.errors)  # Debug print
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
@@ -100,7 +118,6 @@ def task_detail(request, pk):
     except Task.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    # Check permissions based on user role
     if hasattr(request.user, 'supervisor'):
         # Supervisors can perform all actions
         if request.method == 'GET':
@@ -179,6 +196,4 @@ def worker_detail(request, pk):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
     return Response({'message': 'You do not have permission to perform this action.'}, status=status.HTTP_403_FORBIDDEN)
-
-
 
