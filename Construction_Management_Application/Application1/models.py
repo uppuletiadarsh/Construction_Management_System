@@ -41,16 +41,6 @@ class Worker(models.Model):
     def __str__(self):
         return self.name
 
-# Task Model
-class Task(models.Model):
-    title = models.CharField(max_length=100)
-    description = models.TextField()
-    due_date = models.DateField()
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    worker = models.ForeignKey(Worker, on_delete=models.SET_NULL, null=True, blank=True)
-
-    def __str__(self):
-        return self.title
 
 class Project(models.Model):
     name = models.CharField(max_length=100)
@@ -71,12 +61,28 @@ class Worker(models.Model):
         return self.name
 
 # Task Model
+from django.db import models
+
+from django.db import models
+
+from django.db import models
+from django.contrib.auth.models import User
+
+class Worker(models.Model):
+    name = models.CharField(max_length=100)
+    token_no = models.CharField(max_length=50, unique=True)  # Ensure token number is unique
+    is_available = models.BooleanField(default=True)  # Availability status
+
+    def __str__(self):
+        return self.name
+
 class Task(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     due_date = models.DateField()
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    worker = models.ForeignKey(Worker, on_delete=models.SET_NULL, null=True, blank=True)
+    image = models.ImageField(upload_to='task_images/', null=True, blank=True)  # Image field
+    workers = models.ManyToManyField(Worker, blank=True)  # Many-to-many relationship with Worker
 
     def __str__(self):
         return self.title
