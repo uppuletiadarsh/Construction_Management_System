@@ -5,12 +5,8 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import User, Manager, Supervisor
 
-from rest_framework import serializers
-from django.contrib.auth.models import User
-from .models import Manager, Supervisor
-from rest_framework import serializers
-from django.contrib.auth.models import User
-from .models import Manager, Supervisor
+
+
 
 class UserSerializer(serializers.ModelSerializer):
     role = serializers.ChoiceField(choices=[('manager', 'Manager'), ('supervisor', 'Supervisor')])
