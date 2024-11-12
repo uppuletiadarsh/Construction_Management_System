@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'Construction_Management_Application.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'adarsh.sqlite3',
+        'NAME': BASE_DIR / 'cms.sqlite3',
     }
 }
 

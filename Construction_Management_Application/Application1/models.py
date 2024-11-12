@@ -24,7 +24,7 @@ class Manager(models.Model):
 
 
 
-#
+
 
 
 class Project(models.Model):
@@ -36,9 +36,6 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
-
-
-# Task Model
 
 
 class Worker(models.Model):
@@ -62,3 +59,37 @@ class Task(models.Model):
 
 
 
+class Resource(models.Model):
+    RESOURCE_TYPES = [
+        ('material', 'Material'),
+        ('equipment', 'Equipment'),
+        ('labor', 'Labor'),
+    ]
+    
+    resource_name = models.CharField(max_length=100)  # Resource name (e.g., concrete, scaffolding)
+    resource_type = models.CharField(max_length=10, choices=RESOURCE_TYPES)  # Type of resource
+    quantity = models.PositiveIntegerField()  # Available quantity
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)  # Link to project
+
+    def __str__(self):
+        return f"{self.resource_name} ({self.resource_type})"
+    
+
+   
+
+"""
+class TaskMedia(models.Model):
+    MEDIA_TYPES = [
+        ('image', 'Image'),
+        ('video', 'Video'),
+    ]
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='media_files')  # Link to the Task
+    media_type = models.CharField(max_length=5, choices=MEDIA_TYPES)  # To store whether it's an image or a video
+    media_file = models.FileField(upload_to='task_media/')  # Field to store the media file (image/video)
+    uploaded_at = models.DateTimeField(auto_now_add=True)  # Timestamp for when the media is uploaded
+
+    def __str__(self):
+        return f"{self.get_media_type_display()} for Task: {self.task.title}"
+    class Meta:
+        verbose_name = 'Task Media'
+        verbose_name_plural = 'Task Media Files'"""

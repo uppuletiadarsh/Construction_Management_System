@@ -8,6 +8,10 @@ from .models import User, Manager, Supervisor
 
 
 
+
+
+
+
 class UserSerializer(serializers.ModelSerializer):
     role = serializers.ChoiceField(choices=[('manager', 'Manager'), ('supervisor', 'Supervisor')])
     name = serializers.CharField(max_length=100)
@@ -38,7 +42,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 
-from rest_framework import serializers
+
 from .models import Supervisor, Manager, Project, Worker, Task
 
 class SupervisorSerializer(serializers.ModelSerializer):
@@ -125,3 +129,11 @@ class TaskSerializer(serializers.ModelSerializer):
         instance = super().update(instance, validated_data)
         instance.workers.set(workers)
         return instance
+
+
+from .models import Resource
+
+class ResourceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Resource
+        fields = ['id', 'resource_name', 'resource_type', 'quantity', 'project']
