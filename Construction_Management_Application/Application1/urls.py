@@ -17,7 +17,7 @@ from .views import (
     resource_detail,
     put_or_delete_project,
     manage_supervisor,
-    manager_dashboard,
+    #manager_dashboard,
     get_supervisors,
     
 

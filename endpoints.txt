@@ -26,7 +26,7 @@ for supervisor :
 
 =============================================================================
 for login :
-http://127.0.0.1:8000/projects/create/
+http://127.0.0.1:8000/login/
 
 {
   "username": "manager_user",
@@ -34,7 +34,7 @@ http://127.0.0.1:8000/projects/create/
 }
 ==============================================================================
 for creating project :
-http://127.0.0.1:8000/login/
+http://127.0.0.1:8000/projects/create/
 
 {
   "name": "Project ABC",
@@ -48,10 +48,41 @@ for task creation :
 http://127.0.0.1:8000/tasks/create/
 {
   "title": "Task 1",
-  "description": "Complete project ABC",
-  "due_date": "2024-12-01",
-  "project": 1,  // Project ID
-  "workers": ["worker_token_1", "worker_token_2"]  // List of worker tokens
+  "description": "This is a description of the task.",
+  "due_date": "2024-11-30",
+  "project": 1,
+  "image": "image_url_or_path",
+  "workers": ["WKR12345", "WKR67890"]
 }
-=============================================================================
 
+=============================================================================
+for workers creation
+http://127.0.0.1:8000/workers/create/
+
+{
+  "name": "John Doe",
+  "token_no": "WKR12345",
+  "is_available": true
+}
+=========================================================================
+for resource creation
+http://127.0.0.1:8000/resources/create/
+
+
+{
+  "resource_name": "Cement",
+  "resource_type": "Material",
+  "quantity": 500,
+  "project": 1
+}
+
+======================================================
+manager have GET Access For 
+
+1. Tasks http://127.0.0.1:8000/manager/tasks/
+
+2. Workers http://127.0.0.1:8000/manager/workers/
+
+3. Resources http://127.0.0.1:8000/manager/resources/
+
+4. Supervisors http://127.0.0.1:8000/manager/supervisors/

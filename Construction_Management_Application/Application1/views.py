@@ -68,9 +68,8 @@ def my_profile(request):
 from rest_framework.permissions import IsAuthenticated
 
 
-
 @api_view(['POST'])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def create_project(request):
     """Create a new project (Managers only)."""
     if not hasattr(request.user, 'manager'):
@@ -79,13 +78,17 @@ def create_project(request):
     serializer = ProjectSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({
+            'message': 'Project created successfully.',
+            'project': serializer.data
+        }, status=status.HTTP_201_CREATED)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
 
 
 from rest_framework.decorators import api_view, permission_classes
-
 @api_view(['PUT', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def put_or_delete_project(request, pk):
@@ -99,13 +102,18 @@ def put_or_delete_project(request, pk):
     # Check if the logged-in user is a manager
     if not hasattr(request.user, 'manager'):
         return Response({'message': 'You do not have permission to modify this project.'}, status=status.HTTP_403_FORBIDDEN)
+
     # Handle PUT request for updating the project
     if request.method == 'PUT':
         serializer = ProjectSerializer(project, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({
+                'message': 'Project updated successfully.',
+                'project': serializer.data
+            }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
     # Handle DELETE request for deleting the project
     elif request.method == 'DELETE':
         project.delete()
@@ -114,8 +122,9 @@ def put_or_delete_project(request, pk):
 
 
 
+
 @api_view(['GET'])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def get_projects(request):
     """Get a list of projects (Managers only)."""
     if not hasattr(request.user, 'manager'):
@@ -123,7 +132,12 @@ def get_projects(request):
 
     projects = Project.objects.all()
     serializer = ProjectSerializer(projects, many=True)
-    return Response(serializer.data)
+    
+    # Return a success message with the list of projects
+    return Response({
+        'message': 'Projects fetched successfully.',
+        'projects': serializer.data
+    })
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -156,27 +170,37 @@ def manage_supervisor(request, pk):
 
 
 @api_view(['POST'])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def create_task(request):
     """Create a new task (Supervisors only)."""
     if not hasattr(request.user, 'supervisor'):
         return Response({'message': 'You do not have permission to create a task.'}, status=status.HTTP_403_FORBIDDEN)
+
     serializer = TaskSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # Add a custom success message along with the task data
+        return Response({
+            'message': 'Task created successfully.',
+            'task': serializer.data
+        }, status=status.HTTP_201_CREATED)
+
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
 @api_view(['GET'])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def get_tasks(request):
     """Get a list of tasks (All users can see tasks)."""
     tasks = Task.objects.all()
     serializer = TaskSerializer(tasks, many=True)
-    return Response(serializer.data)
-
+    
+    # Return a success message along with the list of tasks
+    return Response({
+        'message': 'Tasks fetched successfully.',
+        'tasks': serializer.data
+    })
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -219,7 +243,7 @@ def task_detail(request, pk):
 
 
 @api_view(['GET'])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def get_workers(request):
     """Get a list of workers (Supervisors only)."""
     if not hasattr(request.user, 'supervisor'):
@@ -227,12 +251,17 @@ def get_workers(request):
 
     workers = Worker.objects.all()
     serializer = WorkerSerializer(workers, many=True)
-    return Response(serializer.data)
+    
+    # Return a success message with the list of workers
+    return Response({
+        'message': 'Workers fetched successfully.',
+        'workers': serializer.data
+    })
 
 
 
 @api_view(['POST'])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def create_worker(request):
     """Create a new worker (Supervisors only)."""
     if not hasattr(request.user, 'supervisor'):
@@ -241,7 +270,12 @@ def create_worker(request):
     serializer = WorkerSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # Add a custom success message along with the worker data
+        return Response({
+            'message': 'Worker created successfully.',
+            'worker': serializer.data
+        }, status=status.HTTP_201_CREATED)
+
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
